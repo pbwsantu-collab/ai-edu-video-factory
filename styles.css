@@ -31,6 +31,7 @@ body {
 
 #app { display: flex; flex-direction: column; min-height: 100dvh; }
 
+/* Header */
 .app-header {
   background: var(--bg-card);
   border-bottom: 1px solid var(--border);
@@ -60,6 +61,7 @@ body {
 
 .header-actions { display: flex; gap: 0.5rem; }
 
+/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -72,7 +74,7 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s, transform 0.1s;
-  min-height: 44px;
+  min-height: 44px; /* touch target */
 }
 .btn:active { transform: scale(0.97); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -104,6 +106,7 @@ body {
 }
 .icon-btn:hover { background: var(--bg-elevated); }
 
+/* Main */
 .main-content {
   flex: 1;
   max-width: 1200px;
@@ -113,6 +116,7 @@ body {
   padding-bottom: calc(1.5rem + var(--safe-bottom));
 }
 
+/* Dashboard */
 .dashboard-header {
   display: flex;
   flex-wrap: wrap;
@@ -177,6 +181,7 @@ body {
 .empty-state h3 { color: var(--text); margin-bottom: 0.5rem; }
 .empty-state p { margin-bottom: 1.5rem; }
 
+/* Forms & Create flow */
 .form-section {
   background: var(--bg-card);
   border-radius: var(--radius);
@@ -297,6 +302,7 @@ textarea { min-height: 140px; resize: vertical; }
 }
 .file-item .remove { margin-left: auto; }
 
+/* Wizard steps */
 .wizard-steps {
   display: flex;
   gap: 0.5rem;
@@ -325,6 +331,7 @@ textarea { min-height: 140px; resize: vertical; }
   flex-wrap: wrap;
 }
 
+/* Editor */
 .editor-layout {
   display: grid;
   grid-template-columns: 1fr;
@@ -372,6 +379,7 @@ textarea { min-height: 140px; resize: vertical; }
   border: 1px solid var(--border);
 }
 
+/* Storyboard */
 .storyboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -397,6 +405,7 @@ textarea { min-height: 140px; resize: vertical; }
   font-size: 0.85rem;
 }
 
+/* Toast */
 .toast-container {
   position: fixed;
   bottom: calc(1rem + var(--safe-bottom));
@@ -425,6 +434,7 @@ textarea { min-height: 140px; resize: vertical; }
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Modal */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -452,6 +462,7 @@ textarea { min-height: 140px; resize: vertical; }
   margin-top: 1.5rem;
 }
 
+/* Responsive tweaks */
 @media (max-width: 600px) {
   .logo { font-size: 1rem; }
   .btn { padding: 0.5rem 0.8rem; font-size: 0.85rem; }
@@ -459,6 +470,7 @@ textarea { min-height: 140px; resize: vertical; }
   .project-grid { grid-template-columns: 1fr; }
 }
 
+/* Accessibility */
 :focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
