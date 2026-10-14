@@ -64,8 +64,10 @@ export async function extractTextFromPdf(source, opts = {}) {
 /**
  * OCR integration point for textbook photographs.
  * Not enabled by default — requires Tesseract.js (or similar) to be loaded by the host page.
+ * Returns a clear error so the UI can label the feature.
  */
 export async function extractTextFromImage(_file, _opts = {}) {
+  // Integration point: if window.Tesseract is present, use it.
   if (typeof window !== 'undefined' && window.Tesseract && typeof window.Tesseract.recognize === 'function') {
     const result = await window.Tesseract.recognize(_file, 'eng+ben', {
       logger: m => _opts.onProgress?.(m.status || String(m))
