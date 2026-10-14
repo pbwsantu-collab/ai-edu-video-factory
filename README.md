@@ -1,122 +1,156 @@
-# AI Education Video Factory – Phase 1
+# AI Education Video Factory – Phase 1 + Phase 2
 
-Responsive Progressive Web App (PWA) for creating and managing educational video lesson projects locally.
+Responsive Progressive Web App (PWA) for creating educational video lesson projects locally, with an AI Lesson Engine for structured bilingual content.
 
-**Phase 1 scope (implemented):**
+## Phase 1 (complete)
+
 - Dashboard with project list
-- Create Lesson wizard (class, subject, teaching language, animation mode, text input)
-- PDF / image import interface (files stored with project; extraction not yet implemented)
-- Lesson editor (scenes, content, notes)
-- Storyboard view
-- Save / reopen / rename / delete projects
-- IndexedDB persistent local storage
-- Responsive layouts (desktop Windows + Android/mobile)
-- Accessible forms and clear error messages
-- Offline-capable static assets via service worker
+- Create Lesson wizard (class, subject, language, animation mode, text)
+- PDF / image import interface
+- Lesson editor (scenes) and storyboard
+- Save / reopen / rename / delete via **IndexedDB**
+- Responsive layouts (Windows + Android)
+- Accessible forms and clear errors
+- Offline static assets via service worker
 
-**Explicitly not implemented yet (clearly labelled in UI):**
-- Paid AI services / script generation
-- Full animation engine / video export
-- PDF text extraction & analysis
-- Voiceover / TTS
+## Phase 2 – AI Lesson Engine (this release)
+
+### Textbook input
+- Text input preserved
+- **PDF text extraction** via PDF.js (browser CDN)
+- Image import with **OCR integration point** (Tesseract.js optional; not loaded by default)
+- Original extracted text preserved on the project
+- Clear errors for unsupported or oversized files
+
+### AI providers (modular)
+| Provider | Behaviour |
+|----------|-----------|
+| **Manual only** | Always available. Empty structure for hand editing. |
+| **Test structure** | Offline demo. Fills sample bilingual/MCQ data for UI testing. **Not real AI.** |
+| **Ollama (local)** | Calls `http://127.0.0.1:11434` (configurable). Fails clearly if Ollama is down or has no models. |
+
+- No paid cloud APIs connected
+- No API keys in browser JavaScript
+- Model name configurable for Ollama
+
+### Structured lesson output (editable)
+- Original lesson text
+- English + Bengali explanations
+- Sentence-by-sentence EN/BN meanings
+- Vocabulary with Bengali meanings + pronunciation
+- Important concepts
+- MCQs with correct answers + explanations
+- Scene-planning notes (for future animation)
+- Subject extras (math steps, science diagrams, history timeline, geography maps, etc.)
+
+### Subject adaptation (Classes V–XII focus)
+English, Bengali, Mathematics, Physical Science, Life Science, History, Geography, EVS, Computer Science (+ legacy subjects).
+
+### Teacher review
+- Full edit of all generated fields
+- Approve / unapprove before later stages
+- Original source text kept distinct from AI text
+- Warning when chapter name lacks verified file/text source
+
+### Storage
+- IndexedDB schema version **2** (additive `lessonData` on projects)
+- Existing Phase 1 projects remain readable
+- Save / reopen generated content; storage errors reported without silent data loss
+
+## Not implemented (labelled in UI)
+
+- Paid AI services
+- Animation engine / video export
+- OCR until Tesseract.js is loaded by the host page
+- Cloud sync
 
 ## Requirements
 
-- Modern browser (Chrome, Edge, Firefox, Safari) with IndexedDB support
-- Optional: Node.js 18+ if you want to use a local static server or Vite
+- Modern browser with IndexedDB
+- Optional: [Ollama](https://ollama.com) for local generation (`ollama serve`, `ollama pull llama3.2`)
+- Ollama may need CORS enabled for browser calls from your origin
 
 ## Installation & startup
-
-### Option A – Simple static server (recommended for Phase 1)
-
-```bash
-cd ai-edu-video-factory
-npx --yes serve -s . -l 4173
-```
-
-Then open http://localhost:4173
-
-Or with Python:
 
 ```bash
 cd ai-edu-video-factory
 python3 -m http.server 4173
+# open http://localhost:4173
 ```
 
-### Option B – Vite (if you prefer hot reload)
+Or:
 
 ```bash
-cd ai-edu-video-factory
-npm install vite --save-dev
-npx vite
+npx --yes serve -s . -l 4173
 ```
 
-### Production build
-
-Because Phase 1 is a pure static PWA (no bundler required for core functionality), the “production” artifacts are the same files:
+### Ollama (optional)
 
 ```bash
-# Copy or deploy the folder contents to any static host
-# (Netlify, Vercel, GitHub Pages, Nginx, etc.)
+ollama serve
+ollama pull llama3.2
+# In the app: Provider = Ollama, Check provider, then Generate
 ```
 
-If using Vite:
+If the browser blocks requests, configure Ollama CORS or use a local reverse proxy. The app never claims success when Ollama is unreachable.
 
-```bash
-npx vite build
-# output in dist/
-```
+### Optional OCR
 
-## Testing performed (Phase 1)
-
-1. **Project creation & persistence** – Create lesson through wizard → appears on dashboard after reload (IndexedDB).
-2. **Editing & reopening** – Open project, edit scenes, save, close browser tab, reopen → data restored.
-3. **Delete** – Delete confirmation modal → project removed from list and DB.
-4. **Rename** – Rename modal works and persists.
-5. **Mobile responsiveness** – Layout uses flexible grid, 44px touch targets, safe-area insets; tested via browser devtools (Android viewport).
-6. **Accessibility** – Labels, aria attributes, focus styles, error messages with role="alert".
-7. **Offline** – Service worker caches core assets.
+Load Tesseract.js and set `window.Tesseract` before importing images if you need photograph OCR.
 
 ## Project structure
 
 ```
 ai-edu-video-factory/
-├── index.html          # App shell
-├── styles.css          # Responsive dark theme
-├── app.js              # All application logic + IndexedDB
-├── sw.js               # Service worker
-├── manifest.json       # PWA manifest
+├── index.html
+├── styles.css
+├── app.js              # UI + IndexedDB + lesson engine integration
+├── ai-providers.js     # Manual / Test / Ollama providers
+├── pdf-extract.js      # PDF.js extraction + OCR hook
+├── sw.js
+├── manifest.json
 ├── favicon.svg
 └── README.md
 ```
 
-## Data model (IndexedDB)
+## Data model (IndexedDB `projects`)
 
-Store name: `projects`
+Phase 1 fields plus:
 
 ```js
 {
-  id: string,
-  title: string,
-  classLevel: string,
-  subject: string,
-  language: string,
-  animMode: string,
-  textContent: string,
-  importedFiles: [{ name, type, size, dataUrl? }],
-  scenes: [{ id, title, content, notes }],
-  createdAt: number,
-  updatedAt: number
+  chapterName: string,
+  hasVerifiedSource: boolean,
+  lessonData: {
+    originalText, englishExplanation, bengaliExplanation,
+    sentences: [{ en, bn }],
+    vocabulary: [{ word, meaningBn, pronunciation }],
+    concepts: string[],
+    mcqs: [{ question, options, correctIndex, explanation }],
+    sceneNotes: string[],
+    subjectExtras: object,
+    generatedAt, provider, model,
+    approved, approvedAt
+  }
 }
 ```
 
-## Next phases (out of scope)
+## Testing checklist (Phase 2)
 
-- AI script / storyboard generation
-- Animation timeline & renderer
-- Export to video
-- Cloud sync / multi-device
+1. Phase 1 create / save / reopen / rename / delete still works
+2. PDF extraction fills text content
+3. Invalid file types show errors
+4. Manual + Test providers work offline
+5. Ollama reports unavailable when not running (no fake success)
+6. Bengali text saves and reloads
+7. MCQ edit + approve persist
+8. Mobile layout usable
+
+## Git
+
+Tag `phase1-complete` marks the pre–Phase 2 checkpoint.
+Tag `phase2-complete` marks Phase 2 complete.
 
 ---
 
-Stop after Phase 1. No paid AI services connected.
+**Stop after Phase 2.** Animation engine and video exporter are out of scope.
