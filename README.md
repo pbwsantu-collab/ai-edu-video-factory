@@ -104,7 +104,8 @@ Load Tesseract.js and set `window.Tesseract` before importing images if you need
 ai-edu-video-factory/
 ├── index.html
 ├── styles.css
-├── app.js              # UI + IndexedDB + lesson engine integration
+├── app.js              # UI + IndexedDB
+├── lesson-engine.js    # Phase 2 review, generation, approval
 ├── ai-providers.js     # Manual / Test / Ollama providers
 ├── pdf-extract.js      # PDF.js extraction + OCR hook
 ├── sw.js
@@ -149,7 +150,6 @@ Phase 1 fields plus:
 ## Git
 
 Tag `phase1-complete` marks the pre–Phase 2 checkpoint.
-Tag `phase2-complete` marks Phase 2 complete.
 
 ---
 
