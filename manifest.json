@@ -1,0 +1,18 @@
+{
+  "name": "AI Education Video Factory",
+  "short_name": "EduVideoFactory",
+  "description": "Create animated educational video lessons offline-first. Phase 1 local project management.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1e40af",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
