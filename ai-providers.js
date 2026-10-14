@@ -4,46 +4,92 @@
  * No API keys in browser code. Ollama uses local endpoint only.
  */
 
+/** @typedef {{
+ *   originalText: string,
+ *   englishExplanation: string,
+ *   bengaliExplanation: string,
+ *   sentences: Array<{en: string, bn: string}>,
+ *   vocabulary: Array<{word: string, meaningBn: string, pronunciation: string}>,
+ *   concepts: string[],
+ *   mcqs: Array<{question: string, options: string[], correctIndex: number, explanation: string}>,
+ *   sceneNotes: string[],
+ *   subjectExtras: object,
+ *   generatedAt: number,
+ *   provider: string,
+ *   model: string,
+ *   approved: boolean,
+ *   approvedAt: number|null
+ * }} LessonData */
+
+/**
+ * Base interface every provider must implement.
+ */
 export class AIProvider {
+  /** @returns {string} */
   get id() { return 'base'; }
+  /** @returns {string} */
   get label() { return 'Base'; }
+  /** @returns {Promise<{available: boolean, message: string, models?: string[]}>} */
   async checkAvailability() {
     return { available: false, message: 'Not implemented' };
   }
+  /**
+   * @param {object} opts
+   * @param {string} opts.text
+   * @param {string} opts.classLevel
+   * @param {string} opts.subject
+   * @param {string} opts.language
+   * @param {string} [opts.model]
+   * @param {(status: string) => void} [opts.onStatus]
+   * @returns {Promise<LessonData>}
+   */
   async generateLesson(opts) {
     throw new Error('generateLesson not implemented');
   }
 }
 
+/**
+ * Manual-only provider – always available, never invents content.
+ * Teachers edit everything by hand.
+ */
 export class ManualProvider extends AIProvider {
   get id() { return 'manual'; }
   get label() { return 'Manual only (no AI)'; }
+
   async checkAvailability() {
     return {
       available: true,
       message: 'AI generation is off. You can enter and edit all lesson fields manually.'
     };
   }
-  async generateLesson({ text, onStatus }) {
+
+  async generateLesson({ text, classLevel, subject, language, onStatus }) {
     onStatus?.('Preparing empty lesson structure for manual editing…');
     return emptyLessonFromText(text, 'manual', 'none');
   }
 }
 
+/**
+ * Test / demo provider – produces structured sample data for offline testing.
+ * Clearly labelled; does not claim to be real AI.
+ */
 export class TestProvider extends AIProvider {
   get id() { return 'test'; }
   get label() { return 'Test structure (offline demo)'; }
+
   async checkAvailability() {
     return {
       available: true,
       message: 'Demo provider only. Generates sample structured data for testing UI and storage — not real AI output.'
     };
   }
+
   async generateLesson({ text, classLevel, subject, language, onStatus }) {
     onStatus?.('Building test lesson structure…');
     await delay(400);
     onStatus?.('Adapting for subject: ' + subject);
     await delay(300);
+
     const sample = emptyLessonFromText(text || 'Sample textbook paragraph about the topic.', 'test', 'demo-v1');
     sample.englishExplanation =
       `This is a TEST explanation for ${subject} (${classLevel}). ` +
@@ -58,13 +104,18 @@ export class TestProvider extends AIProvider {
       { word: 'concept', meaningBn: 'ধারণা', pronunciation: 'kon-sept' },
       { word: 'example', meaningBn: 'উদাহরণ', pronunciation: 'ig-zam-pul' }
     ];
-    sample.concepts = ['Core idea 1 (edit me)', 'Core idea 2 (edit me)'];
-    sample.mcqs = [{
-      question: 'Sample MCQ – which statement is true?',
-      options: ['Option A', 'Option B', 'Option C', 'Option D'],
-      correctIndex: 0,
-      explanation: 'Option A is correct in this test data. Edit freely.'
-    }];
+    sample.concepts = [
+      'Core idea 1 (edit me)',
+      'Core idea 2 (edit me)'
+    ];
+    sample.mcqs = [
+      {
+        question: 'Sample MCQ – which statement is true?',
+        options: ['Option A', 'Option B', 'Option C', 'Option D'],
+        correctIndex: 0,
+        explanation: 'Option A is correct in this test data. Edit freely.'
+      }
+    ];
     sample.sceneNotes = [
       'Scene 1: Introduce the topic with a title card.',
       'Scene 2: Show key terms on screen.',
@@ -75,14 +126,22 @@ export class TestProvider extends AIProvider {
   }
 }
 
+/**
+ * Ollama local provider.
+ * Expects Ollama running with CORS enabled for the app origin.
+ * Default: http://127.0.0.1:11434
+ * No API keys — local only.
+ */
 export class OllamaProvider extends AIProvider {
   constructor(baseUrl = 'http://127.0.0.1:11434') {
     super();
     this.baseUrl = baseUrl.replace(/\/$/, '');
     this.defaultModel = 'llama3.2';
   }
+
   get id() { return 'ollama'; }
   get label() { return 'Ollama (local)'; }
+
   async checkAvailability() {
     try {
       const res = await fetch(`${this.baseUrl}/api/tags`, {
@@ -116,12 +175,17 @@ export class OllamaProvider extends AIProvider {
       return { available: false, message: msg };
     }
   }
+
   async generateLesson({ text, classLevel, subject, language, model, onStatus }) {
     const availability = await this.checkAvailability();
-    if (!availability.available) throw new Error(availability.message);
+    if (!availability.available) {
+      throw new Error(availability.message);
+    }
     const chosen = model || availability.models?.[0] || this.defaultModel;
     onStatus?.(`Calling Ollama model “${chosen}”…`);
+
     const prompt = buildLessonPrompt({ text, classLevel, subject, language });
+
     const res = await fetch(`${this.baseUrl}/api/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -134,10 +198,12 @@ export class OllamaProvider extends AIProvider {
       }),
       signal: AbortSignal.timeout(180000)
     });
+
     if (!res.ok) {
       const body = await res.text().catch(() => '');
       throw new Error(`Ollama generate failed (HTTP ${res.status}): ${body.slice(0, 200)}`);
     }
+
     onStatus?.('Parsing model response…');
     const data = await res.json();
     const raw = data.response || data.message?.content || '';
@@ -145,13 +211,20 @@ export class OllamaProvider extends AIProvider {
     try {
       parsed = JSON.parse(raw);
     } catch {
+      // Try to extract JSON object from surrounding text
       const match = raw.match(/\{[\s\S]*\}/);
-      if (match) parsed = JSON.parse(match[0]);
-      else throw new Error('Model did not return valid JSON. Try another model or edit manually.');
+      if (match) {
+        parsed = JSON.parse(match[0]);
+      } else {
+        throw new Error('Model did not return valid JSON. Try another model or edit manually.');
+      }
     }
+
     return normalizeLessonData(parsed, text, 'ollama', chosen);
   }
 }
+
+// ---------- Helpers ----------
 
 function delay(ms) {
   return new Promise(r => setTimeout(r, ms));
@@ -213,7 +286,10 @@ function buildSubjectExtras(subject, text) {
     };
   }
   if (s.includes('english') || s.includes('bengali') || s.includes('hindi') || s.includes('language')) {
-    return { type: 'language', focus: 'sentence meanings and vocabulary' };
+    return {
+      type: 'language',
+      focus: 'sentence meanings and vocabulary'
+    };
   }
   return { type: 'general' };
 }
@@ -256,6 +332,7 @@ Keep content accurate for the class level. Use simple language. Include 3–6 MC
 function normalizeLessonData(parsed, originalText, provider, model) {
   const base = emptyLessonFromText(originalText, provider, model);
   if (!parsed || typeof parsed !== 'object') return base;
+
   base.englishExplanation = str(parsed.englishExplanation);
   base.bengaliExplanation = str(parsed.bengaliExplanation);
   base.sentences = Array.isArray(parsed.sentences)
@@ -288,6 +365,7 @@ function str(v) {
   return v == null ? '' : String(v);
 }
 
+/** Registry of available providers */
 export function createProviderRegistry(ollamaBaseUrl) {
   return {
     manual: new ManualProvider(),
