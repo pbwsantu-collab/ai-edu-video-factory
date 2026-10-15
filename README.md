@@ -1,6 +1,6 @@
-# AI Education Video Factory – Phase 1 + Phase 2
+# AI Education Video Factory – Phase 1 + Phase 2 + Phase 3
 
-Responsive Progressive Web App (PWA) for creating educational video lesson projects locally, with an AI Lesson Engine for structured bilingual content.
+Responsive Progressive Web App (PWA) for creating educational video lesson projects locally, with an AI Lesson Engine and browser-based Animation Studio.
 
 ## Phase 1 (complete)
 
@@ -13,7 +13,7 @@ Responsive Progressive Web App (PWA) for creating educational video lesson proje
 - Accessible forms and clear errors
 - Offline static assets via service worker
 
-## Phase 2 – AI Lesson Engine (this release)
+## Phase 2 – AI Lesson Engine (complete)
 
 ### Textbook input
 - Text input preserved
@@ -40,29 +40,75 @@ Responsive Progressive Web App (PWA) for creating educational video lesson proje
 - Vocabulary with Bengali meanings + pronunciation
 - Important concepts
 - MCQs with correct answers + explanations
-- Scene-planning notes (for future animation)
-- Subject extras (math steps, science diagrams, history timeline, geography maps, etc.)
-
-### Subject adaptation (Classes V–XII focus)
-English, Bengali, Mathematics, Physical Science, Life Science, History, Geography, EVS, Computer Science (+ legacy subjects).
+- Scene-planning notes
+- Subject extras (math steps, science diagrams, history timeline, etc.)
 
 ### Teacher review
 - Full edit of all generated fields
 - Approve / unapprove before later stages
 - Original source text kept distinct from AI text
-- Warning when chapter name lacks verified file/text source
 
 ### Storage
 - IndexedDB schema version **2** (additive `lessonData` on projects)
-- Existing Phase 1 projects remain readable
-- Save / reopen generated content; storage errors reported without silent data loss
+
+## Phase 3 – Animation Engine (this release)
+
+### Animation Studio
+- Integrated into the existing app (button from Lesson Editor)
+- Project / lesson context preserved
+- Animation-mode selector (7 educational modes)
+- Scene storyboard with reorder, duplicate, delete, add
+- Scene preview stage
+- Playback: Play, Pause, Resume, Restart, Previous / Next scene
+- Playback speed control (0.5×–2×)
+- Timeline / progress indicator
+- Scene duration control
+- Edit scene text, English / Bengali, narration, teacher notes
+- Save animation project / reopen after reload
+- Reset preview
+- Clear error messages for unapproved lessons
+
+### Supported animation modes
+| Mode | Behaviour |
+|------|-----------|
+| **Whiteboard** | Sequential headings, progressive text, simple pointer |
+| **Classroom** | Board + teacher-style presentation area |
+| **Diagram** | SVG shapes, arrows, progressive labels (illustrative) |
+| **Timeline** | Horizontal timeline with sequential events |
+| **Text & Vocabulary** | English–Bengali pairs, vocab cards, progressive reveal |
+| **Mathematics Step** | Problem + step-by-step solution highlight |
+| **Science Process** | Sequential stages with arrows (illustrative) |
+
+### Scene generation from approved lessons
+- Requires **teacher approval** in Lesson Engine
+- Maps concepts, sentences, vocabulary, subject extras, scene notes → editable scenes
+- Manual scene creation always available
+- Does **not** invent scientifically accurate diagrams or verified math answers
+- Bengali Unicode preserved
+
+### Scene data & persistence
+- Versioned scene objects (display text, EN/BN, narration, visual elements, steps, duration)
+- `animationData` stored **additively** on the existing project record (IndexedDB v3)
+- Does not overwrite original textbook text or approved lesson content
+- Survives browser reload
+
+### Playback engine
+- `requestAnimationFrame` based
+- Respects `prefers-reduced-motion`
+- Pauses safely on tab visibility change
+- No duplicate animation loops; timers cleaned on scene change
+
+### Offline / PWA
+- Service worker cache **v4** includes `animation-engine.js`
+- Core playback does not depend on external CDNs beyond existing idb import
 
 ## Not implemented (labelled in UI)
 
 - Paid AI services
-- Animation engine / video export
+- Video export / recording (Phase 4)
 - OCR until Tesseract.js is loaded by the host page
 - Cloud sync
+- Fully accurate scientific simulations or verified mathematical solvers
 
 ## Requirements
 
@@ -92,65 +138,14 @@ ollama pull llama3.2
 # In the app: Provider = Ollama, Check provider, then Generate
 ```
 
-If the browser blocks requests, configure Ollama CORS or use a local reverse proxy. The app never claims success when Ollama is unreachable.
-
 ### Optional OCR
 
 Load Tesseract.js and set `window.Tesseract` before importing images if you need photograph OCR.
 
-## Project structure
+## Limitations (honest)
 
-```
-ai-edu-video-factory/
-├── index.html
-├── styles.css
-├── app.js              # UI + IndexedDB
-├── lesson-engine.js    # Phase 2 review, generation, approval
-├── ai-providers.js     # Manual / Test / Ollama providers
-├── pdf-extract.js      # PDF.js extraction + OCR hook
-├── sw.js
-├── manifest.json
-├── favicon.svg
-└── README.md
-```
-
-## Data model (IndexedDB `projects`)
-
-Phase 1 fields plus:
-
-```js
-{
-  chapterName: string,
-  hasVerifiedSource: boolean,
-  lessonData: {
-    originalText, englishExplanation, bengaliExplanation,
-    sentences: [{ en, bn }],
-    vocabulary: [{ word, meaningBn, pronunciation }],
-    concepts: string[],
-    mcqs: [{ question, options, correctIndex, explanation }],
-    sceneNotes: string[],
-    subjectExtras: object,
-    generatedAt, provider, model,
-    approved, approvedAt
-  }
-}
-```
-
-## Testing checklist (Phase 2)
-
-1. Phase 1 create / save / reopen / rename / delete still works
-2. PDF extraction fills text content
-3. Invalid file types show errors
-4. Manual + Test providers work offline
-5. Ollama reports unavailable when not running (no fake success)
-6. Bengali text saves and reloads
-7. MCQ edit + approve persist
-8. Mobile layout usable
-
-## Git
-
-Tag `phase1-complete` marks the pre–Phase 2 checkpoint.
-
----
-
-**Stop after Phase 2.** Animation engine and video exporter are out of scope.
+- Animation is educational illustration, not cinematic production.
+- Diagram and science modes use simple SVG/CSS; labels are editable.
+- Math steps display stored text; no symbolic computation or answer verification is performed.
+- Ollama generation quality depends on the local model and is not guaranteed.
+- Large projects are limited by browser IndexedDB quota.
