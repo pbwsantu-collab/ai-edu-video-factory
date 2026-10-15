@@ -1,16 +1,15 @@
-/**
- * AI Education Video Factory – Phase 1 + Phase 2 + Phase 3 (Animation Engine)
- * Local-first PWA with IndexedDB project storage.
- * Video export is NOT implemented yet (Phase 4).
- */
-
-import { openDB } from 'https://cdn.jsdelivr.net/npm/idb@8/+esm';
-import { createProviderRegistry, emptyLessonFromText } from './ai-providers.js';
-import { extractTextFromPdf, extractTextFromImage, validateImportFile } from './pdf-extract.js';
-import { createLessonEngine } from './lesson-engine.js';
-import { createAnimationEngine, ANIMATION_MODES } from './animation-engine.js';
-
-// ---------- Constants ----------
-const DB_NAME = 'ai-edu-video-factory';
-const DB_VERSION = 3;
-const STORE = 'projects';
+/** Phase 3 app.js gzip loader */
+import { A0 } from './app-b0.js';
+import { A1 } from './app-b1.js';
+import { A2 } from './app-b2.js';
+import { A3 } from './app-b3.js';
+const b64 = A0 + A1 + A2 + A3;
+const bin = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+const ds = new DecompressionStream('gzip');
+const stream = new Blob([bin]).stream().pipeThrough(ds);
+const ab = await new Response(stream).arrayBuffer();
+const code = new TextDecoder().decode(ab);
+const blob = new Blob([code], { type: 'text/javascript' });
+const url = URL.createObjectURL(blob);
+await import(url);
+URL.revokeObjectURL(url);
