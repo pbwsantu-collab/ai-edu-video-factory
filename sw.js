@@ -1,5 +1,5 @@
-/* Phase 1+2 service worker – cache static assets for offline use */
-const CACHE = 'edu-video-factory-v3';
+/* Phase 1+2+3 service worker – cache static assets for offline use */
+const CACHE = 'edu-video-factory-v4';
 const ASSETS = [
   '/',
   '/index.html',
@@ -8,6 +8,7 @@ const ASSETS = [
   '/ai-providers.js',
   '/pdf-extract.js',
   '/lesson-engine.js',
+  '/animation-engine.js',
   '/manifest.json',
   '/favicon.svg'
 ];
@@ -33,7 +34,6 @@ self.addEventListener('fetch', (event) => {
     caches.match(req).then((cached) => {
       if (cached) return cached;
       return fetch(req).then((res) => {
-        // Optionally cache new static assets
         if (res.ok && req.url.startsWith(self.location.origin)) {
           const clone = res.clone();
           caches.open(CACHE).then((c) => c.put(req, clone));
