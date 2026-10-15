@@ -6,10 +6,17 @@ const ASSETS = [
   '/styles.css',
   '/styles-anim.css',
   '/app.js',
+  '/app-b0.js',
+  '/app-b1.js',
+  '/app-b2.js',
+  '/app-b3.js',
   '/ai-providers.js',
   '/pdf-extract.js',
   '/lesson-engine.js',
   '/animation-engine.js',
+  '/ae-b0.js',
+  '/ae-b1.js',
+  '/ae-b2.js',
   '/manifest.json',
   '/favicon.svg'
 ];
