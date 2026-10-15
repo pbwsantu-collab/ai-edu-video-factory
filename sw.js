@@ -1,9 +1,10 @@
 /* Phase 1+2+3 service worker – cache static assets for offline use */
-const CACHE = 'edu-video-factory-v4';
+const CACHE = 'edu-video-factory-v5';
 const ASSETS = [
   '/',
   '/index.html',
   '/styles.css',
+  '/styles-anim.css',
   '/app.js',
   '/ai-providers.js',
   '/pdf-extract.js',
