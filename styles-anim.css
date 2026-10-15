@@ -1,0 +1,165 @@
+/* ========== Phase 3 – Animation Studio ========== */
+.anim-studio { max-width: 1200px; margin: 0 auto; }
+.anim-toolbar {
+  display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;
+  margin-bottom: 1rem;
+}
+.anim-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) 1fr;
+  gap: 1rem;
+}
+@media (max-width: 768px) {
+  .anim-layout { grid-template-columns: 1fr; }
+}
+.anim-sidebar {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.75rem;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.anim-sidebar h3 { margin: 0 0 0.5rem; font-size: 1rem; }
+.anim-mode-select { margin-bottom: 0.75rem; }
+.anim-mode-select select { width: 100%; }
+.anim-sb-list { list-style: none; padding: 0; margin: 0 0 0.75rem; }
+.anim-sb-item {
+  display: flex; gap: 0.5rem; align-items: flex-start;
+  padding: 0.5rem; border-radius: 8px; cursor: pointer;
+  border: 1px solid transparent;
+}
+.anim-sb-item:hover, .anim-sb-item:focus-visible {
+  background: var(--bg); outline: 2px solid var(--primary);
+}
+.anim-sb-item.active {
+  background: rgba(30, 64, 175, 0.25);
+  border-color: var(--primary);
+}
+.sb-num {
+  flex-shrink: 0; width: 1.5rem; height: 1.5rem;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--primary); color: #fff; border-radius: 50%;
+  font-size: 0.75rem; font-weight: 600;
+}
+.sb-title { font-weight: 600; font-size: 0.9rem; }
+.sb-meta { font-size: 0.75rem; color: var(--text-muted); }
+.anim-sb-actions {
+  display: flex; flex-wrap: wrap; gap: 0.35rem;
+}
+.anim-sb-actions .btn { font-size: 0.8rem; padding: 0.35rem 0.5rem; }
+
+.anim-preview-wrap {
+  background: #0b1220;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.anim-preview-stage {
+  min-height: 240px;
+  max-height: 360px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+  overflow: hidden;
+}
+.anim-stage { width: 100%; max-width: 520px; color: #e2e8f0; }
+.anim-progress {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.5rem 0.75rem; background: var(--bg-card);
+  border-top: 1px solid var(--border);
+}
+.anim-progress-track {
+  flex: 1; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden;
+}
+.anim-progress-bar {
+  height: 100%; width: 0%; background: var(--primary); transition: width 0.05s linear;
+}
+.anim-progress-label { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; }
+
+.anim-controls {
+  display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center;
+  margin: 0.75rem 0; padding: 0.5rem 0;
+}
+.speed-label { font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem; }
+.speed-label select { width: auto; }
+
+.anim-edit-panel { margin-top: 1rem; }
+
+/* Whiteboard */
+.wb-board {
+  background: #1e293b; border: 3px solid #64748b; border-radius: 4px;
+  padding: 1.25rem; min-height: 180px; position: relative;
+  font-family: system-ui, sans-serif;
+}
+.wb-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #f8fafc; }
+.wb-body { font-size: 1rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+.wb-bn { margin-top: 0.75rem; font-size: 0.95rem; color: #a5b4fc; white-space: pre-wrap; }
+.wb-pointer {
+  position: absolute; bottom: 12px; right: 16px; width: 14px; height: 14px;
+  background: #fbbf24; border-radius: 50%; box-shadow: 0 0 8px #fbbf24;
+}
+
+/* Classroom */
+.cls-room { display: flex; gap: 1rem; align-items: flex-end; }
+.cls-board {
+  flex: 1; background: #166534; border: 4px solid #854d0e; border-radius: 4px;
+  padding: 1rem; min-height: 160px; color: #f0fdf4;
+}
+.cls-heading { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
+.cls-content { font-size: 0.95rem; white-space: pre-wrap; word-break: break-word; }
+.cls-teacher { font-size: 2.5rem; line-height: 1; }
+
+/* Diagram */
+.diag-wrap { text-align: center; }
+.diag-svg { width: 100%; max-height: 200px; }
+.diag-caption { margin-top: 0.5rem; font-size: 0.9rem; white-space: pre-wrap; }
+
+/* Timeline */
+.tl-track {
+  display: flex; gap: 0.75rem; overflow-x: auto; padding: 1rem 0.5rem;
+  position: relative; align-items: flex-start;
+}
+.tl-line {
+  position: absolute; top: 1.6rem; left: 1rem; right: 1rem; height: 3px;
+  background: #3b82f6; z-index: 0;
+}
+.tl-event { position: relative; z-index: 1; min-width: 100px; text-align: center; }
+.tl-dot {
+  width: 14px; height: 14px; background: #60a5fa; border-radius: 50%;
+  margin: 0 auto 0.35rem; border: 2px solid #1e3a8a;
+}
+.tl-year { font-weight: 700; font-size: 0.85rem; color: #93c5fd; }
+.tl-desc { font-size: 0.8rem; margin-top: 0.25rem; word-break: break-word; }
+
+/* Text / Vocab */
+.tv-stage, .vocab-card-stage { text-align: center; padding: 1.5rem; }
+.tv-en, .vc-word { font-size: 1.35rem; font-weight: 600; margin-bottom: 0.75rem; }
+.tv-bn, .vc-bn { font-size: 1.15rem; color: #a5b4fc; }
+.vc-pron { font-size: 0.9rem; color: var(--text-muted); margin-top: 0.35rem; font-style: italic; }
+
+/* Math */
+.math-stage { padding: 0.5rem; }
+.math-problem { font-weight: 600; margin-bottom: 0.75rem; font-size: 1.05rem; }
+.math-steps { margin: 0; padding-left: 1.25rem; }
+.math-steps li { margin: 0.4rem 0; transition: background 0.2s; padding: 0.25rem 0.35rem; border-radius: 4px; }
+.math-steps li.math-current { background: rgba(59, 130, 246, 0.25); }
+
+/* Science process */
+.sci-stage { padding: 0.5rem; }
+.sci-flow { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; }
+.sci-box {
+  background: var(--bg-card); border: 1px solid #3b82f6; border-radius: 8px;
+  padding: 0.5rem 0.75rem; display: flex; align-items: center; gap: 0.4rem;
+  max-width: 160px; word-break: break-word;
+}
+.sci-num {
+  background: var(--primary); color: #fff; width: 1.4rem; height: 1.4rem;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
+}
+.sci-arrow { font-size: 1.25rem; color: #60a5fa; }
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-progress-bar { transition: none; }
+  .wb-pointer { display: none; }
+}
