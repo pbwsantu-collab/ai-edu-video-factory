@@ -35,12 +35,12 @@ self.addEventListener('fetch', (event) => {
     caches.match(req).then((cached) => {
       if (cached) return cached;
       return fetch(req).then((res) => {
-        if (res.ok && req.url.startsWith(self.location.origin)) {
-          const clone = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, clone));
+        const copy = res.clone();
+        if (res.ok && new URL(req.url).origin === location.origin) {
+          caches.open(CACHE).then((c) => c.put(req, copy));
         }
         return res;
-      }).catch(() => cached || new Response('Offline', { status: 503 }));
+      }).catch(() => caches.match('/index.html'));
     })
   );
 });
