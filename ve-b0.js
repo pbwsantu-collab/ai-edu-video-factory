@@ -1,1 +1,1 @@
-PLACEHOLDER
+export const V0 = 'H4sIAEXj0WoC/8092ZLcyHHv/IriiBIAshvT3XNwbprnkiGSy+Bwl+Hg0mI1UN0DEQ20AfQcmu2IfXLoxeHwEaFHvTnC4Q/wu/Un+
