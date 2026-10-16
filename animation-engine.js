@@ -1,4 +1,4 @@
-/** Phase 3 Animation Engine (gzip loader) */
+/** Phase 3+4.1 Animation Engine (gzip loader) */
 import { B0 } from './ae-b0.js';
 import { B1 } from './ae-b1.js';
 import { B2 } from './ae-b2.js';
