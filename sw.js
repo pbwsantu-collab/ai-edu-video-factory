@@ -1,5 +1,5 @@
-/* Phase 1+2+3 service worker – cache static assets for offline use */
-const CACHE = 'edu-video-factory-v5';
+/* Phase 1+2+3+4.1 service worker – cache static assets for offline use */
+const CACHE = 'edu-video-factory-v6';
 const ASSETS = [
   '/',
   '/index.html',
@@ -16,6 +16,7 @@ const ASSETS = [
   '/pdf-extract.js',
   '/lesson-engine.js',
   '/animation-engine.js',
+  '/video-export.js',
   '/ae-b0.js',
   '/ae-b1.js',
   '/ae-b2.js',
