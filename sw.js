@@ -1,5 +1,5 @@
-/* Phase 1–4.1 service worker – offline cache */
-const CACHE = 'edu-video-factory-v6';
+/* Phase 1–4.2 service worker – offline cache */
+const CACHE = 'edu-video-factory-v7';
 const ASSETS = [
   '/',
   '/index.html',
@@ -18,6 +18,7 @@ const ASSETS = [
   '/ae-b1.js',
   '/ae-b2.js',
   '/video-export.js',
+  '/narration.js',
   '/ve-b0.js',
   '/ve-b1.js',
   '/ve-b2.js',
