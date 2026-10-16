@@ -1,4 +1,4 @@
-/* Phase 1+2+3+4.1 service worker – cache static assets for offline use */
+/* Phase 1–4.1 service worker – offline cache */
 const CACHE = 'edu-video-factory-v6';
 const ASSETS = [
   '/',
@@ -8,18 +8,20 @@ const ASSETS = [
   '/app.js',
   '/app-b0.js',
   '/app-b1.js',
-  '/app-b2a.js',
-  '/app-b2b.js',
-  '/app-b3a.js',
-  '/app-b3b.js',
+  '/app-b2.js',
+  '/app-b3.js',
   '/ai-providers.js',
   '/pdf-extract.js',
   '/lesson-engine.js',
   '/animation-engine.js',
-  '/video-export.js',
   '/ae-b0.js',
   '/ae-b1.js',
   '/ae-b2.js',
+  '/video-export.js',
+  '/ve-b0.js',
+  '/ve-b1.js',
+  '/ve-b2.js',
+  '/ve-b3.js',
   '/manifest.json',
   '/favicon.svg'
 ];
