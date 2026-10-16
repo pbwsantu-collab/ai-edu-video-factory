@@ -1,4 +1,4 @@
-/** Phase 4.1 video-export gzip loader */
+/** Phase 4.1+4.2 video-export gzip loader */
 import { V0 } from './ve-b0.js';
 import { V1 } from './ve-b1.js';
 import { V2 } from './ve-b2.js';

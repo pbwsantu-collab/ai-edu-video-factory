@@ -1,4 +1,4 @@
-/** Phase 4.1 app.js gzip loader */
+/** Phase 4.2 app.js gzip loader */
 import { A0 } from './app-b0.js';
 import { A1 } from './app-b1.js';
 import { A2 } from './app-b2.js';
