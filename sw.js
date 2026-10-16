@@ -1,4 +1,4 @@
-/* Phase 1–4.2 service worker – offline cache */
+/* Phase 1–4.1 service worker – offline cache */
 const CACHE = 'edu-video-factory-v7';
 const ASSETS = [
   '/',
