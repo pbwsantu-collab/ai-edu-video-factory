@@ -39,6 +39,7 @@ Browser-based educational video rendering (no paid APIs, offline).
 - Cancel stops recording; resources (tracks, object URLs) are released.
 - Requires a browser with MediaRecorder and canvas captureStream (Chrome / Edge / Firefox).
 - Long 1080p lessons may need more memory; lower resolution if the device struggles.
+- Large modules (app, animation-engine, video-export) are gzip+base64 chunked and loaded via loaders for GitHub size limits.
 
 ### Not in 4.1
 - Server-side encoding
