@@ -8,8 +8,10 @@ const ASSETS = [
   '/app.js',
   '/app-b0.js',
   '/app-b1.js',
-  '/app-b2.js',
-  '/app-b3.js',
+  '/app-b2a.js',
+  '/app-b2b.js',
+  '/app-b3a.js',
+  '/app-b3b.js',
   '/ai-providers.js',
   '/pdf-extract.js',
   '/lesson-engine.js',
@@ -43,7 +45,7 @@ self.addEventListener('fetch', (event) => {
       if (cached) return cached;
       return fetch(req).then((res) => {
         const copy = res.clone();
-        if (res.ok && new URL(req.url).origin === location.origin) {
+        if (res.ok && new URL(req.url).origin === self.location.origin) {
           caches.open(CACHE).then((c) => c.put(req, copy));
         }
         return res;
