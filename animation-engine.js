@@ -1,14 +1,10 @@
-/** gzip loader */
-import { B0 } from './ae-b0.js';
-import { B1 } from './ae-b1.js';
-import { B2 } from './ae-b2.js';
-import { B3 } from './ae-b3.js';
-const b64 = B0 + B1 + B2 + B3;
-const bin = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-const ds = new DecompressionStream('gzip');
-const stream = new Blob([bin]).stream().pipeThrough(ds);
-const ab = await new Response(stream).arrayBuffer();
-const code = new TextDecoder().decode(ab);
+/** Phase 4.3 source loader */
+import { A0 } from './anim-p0.js';
+import { A1 } from './anim-p1.js';
+import { A2 } from './anim-p2.js';
+import { A3 } from './anim-p3.js';
+import { A4 } from './anim-p4.js';
+const code = A0 + A1 + A2 + A3 + A4;
 const blob = new Blob([code], { type: 'text/javascript' });
 const url = URL.createObjectURL(blob);
 const mod = await import(url);
