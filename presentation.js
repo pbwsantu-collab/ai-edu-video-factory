@@ -1,6 +1,7 @@
 /** Phase 4.3 presentation tools */
-import { PR_SRC } from './pr-src.js';
-const bin = Uint8Array.from(atob(PR_SRC), c => c.charCodeAt(0));
+import { PR_A } from './pr-src-a.js';
+import { PR_B } from './pr-src-b.js';
+const bin = Uint8Array.from(atob(PR_A + PR_B), c => c.charCodeAt(0));
 const ds = new DecompressionStream('gzip');
 const stream = new Blob([bin]).stream().pipeThrough(ds);
 const ab = await new Response(stream).arrayBuffer();
