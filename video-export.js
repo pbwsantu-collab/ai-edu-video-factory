@@ -1,9 +1,11 @@
 /** Phase 4.1–4.3 video-export */
 import { VE_A0 } from './ve-src-a0.js';
 import { VE_A1 } from './ve-src-a1.js';
+import { VE_A2 } from './ve-src-a2.js';
 import { VE_B0 } from './ve-src-b0.js';
 import { VE_B1 } from './ve-src-b1.js';
-const bin = Uint8Array.from(atob(VE_A0 + VE_A1 + VE_B0 + VE_B1), c => c.charCodeAt(0));
+import { VE_B2 } from './ve-src-b2.js';
+const bin = Uint8Array.from(atob(VE_A0 + VE_A1 + VE_A2 + VE_B0 + VE_B1 + VE_B2), c => c.charCodeAt(0));
 const ds = new DecompressionStream('gzip');
 const stream = new Blob([bin]).stream().pipeThrough(ds);
 const ab = await new Response(stream).arrayBuffer();
