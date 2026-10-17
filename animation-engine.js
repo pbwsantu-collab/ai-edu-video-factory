@@ -1,7 +1,9 @@
 /** Phase 3+4.3 Animation Engine */
-import { AE_A } from './ae-src-a.js';
-import { AE_B } from './ae-src-b.js';
-const bin = Uint8Array.from(atob(AE_A + AE_B), c => c.charCodeAt(0));
+import { AE_A0 } from './ae-src-a0.js';
+import { AE_A1 } from './ae-src-a1.js';
+import { AE_B0 } from './ae-src-b0.js';
+import { AE_B1 } from './ae-src-b1.js';
+const bin = Uint8Array.from(atob(AE_A0 + AE_A1 + AE_B0 + AE_B1), c => c.charCodeAt(0));
 const ds = new DecompressionStream('gzip');
 const stream = new Blob([bin]).stream().pipeThrough(ds);
 const ab = await new Response(stream).arrayBuffer();
