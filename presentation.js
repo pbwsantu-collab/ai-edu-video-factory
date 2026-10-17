@@ -1,0 +1,36 @@
+/** Phase 4.3 presentation gzip loader */
+import { P0 } from './pr-b0.js';
+import { P1 } from './pr-b1.js';
+import { P2 } from './pr-b2.js';
+import { P3 } from './pr-b3.js';
+const b64 = P0 + P1 + P2 + P3;
+const bin = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+const ds = new DecompressionStream('gzip');
+const stream = new Blob([bin]).stream().pipeThrough(ds);
+const ab = await new Response(stream).arrayBuffer();
+const code = new TextDecoder().decode(ab);
+const blob = new Blob([code], { type: 'text/javascript' });
+const url = URL.createObjectURL(blob);
+const mod = await import(url);
+URL.revokeObjectURL(url);
+
+export const CAPTION_MODES = mod.CAPTION_MODES;
+export const CAPTION_SIZES = mod.CAPTION_SIZES;
+export const CAPTION_POSITIONS = mod.CAPTION_POSITIONS;
+export const CAPTION_STYLES = mod.CAPTION_STYLES;
+export const OPENING_LAYOUTS = mod.OPENING_LAYOUTS;
+export const defaultPresentation = mod.defaultPresentation;
+export const ensurePresentation = mod.ensurePresentation;
+export const captionTextForScene = mod.captionTextForScene;
+export const collectHighlightTerms = mod.collectHighlightTerms;
+export const drawOpeningFrame = mod.drawOpeningFrame;
+export const drawClosingFrame = mod.drawClosingFrame;
+export const drawBrandingOverlay = mod.drawBrandingOverlay;
+export const drawSceneBranding = mod.drawSceneBranding;
+export const drawCaptions = mod.drawCaptions;
+export const drawHighlightMarkers = mod.drawHighlightMarkers;
+export const preloadBrandingLogo = mod.preloadBrandingLogo;
+export const presentationPanelHtml = mod.presentationPanelHtml;
+export const collectPresentationFromDom = mod.collectPresentationFromDom;
+export const bindPresentationPanel = mod.bindPresentationPanel;
+export const fillSceneCaptionFields = mod.fillSceneCaptionFields;
