@@ -1,10 +1,6 @@
 /** Phase 4.3 source loader */
-import { E0 } from './vid-p0.js';
-import { E1 } from './vid-p1.js';
-import { E2 } from './vid-p2.js';
-import { E3 } from './vid-p3.js';
-import { E4 } from './vid-p4.js';
-const code = E0 + E1 + E2 + E3 + E4;
+const parts = await Promise.all([fetch(new URL('./ve-src.part0.txt', import.meta.url)).then(r=>r.text()), fetch(new URL('./ve-src.part1.txt', import.meta.url)).then(r=>r.text()), fetch(new URL('./ve-src.part2.txt', import.meta.url)).then(r=>r.text())]);
+const code = parts.join('');
 const blob = new Blob([code], { type: 'text/javascript' });
 const url = URL.createObjectURL(blob);
 const mod = await import(url);
