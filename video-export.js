@@ -9,7 +9,11 @@ const bin = Uint8Array.from(atob(VE_A0 + VE_A1 + VE_A2 + VE_B0 + VE_B1 + VE_B2),
 const ds = new DecompressionStream('gzip');
 const stream = new Blob([bin]).stream().pipeThrough(ds);
 const ab = await new Response(stream).arrayBuffer();
-const code = new TextDecoder().decode(ab);
+let code = new TextDecoder().decode(ab);
+const base = import.meta.url;
+code = code.replace(/(from\s+|import\s*\()(['"])(\.\.?\/[^'"]+)\2/g, (m, kw, q, spec) => {
+  return kw + q + new URL(spec, base).href + q;
+});
 const blob = new Blob([code], { type: 'text/javascript' });
 const url = URL.createObjectURL(blob);
 const mod = await import(url);
