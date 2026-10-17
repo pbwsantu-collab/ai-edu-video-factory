@@ -1,25 +1,12 @@
-/** Phase 4.1–4.3 video-export gzip loader */
-import { V0 } from './ve-b0.js';
-import { V1 } from './ve-b1.js';
-import { V2 } from './ve-b2.js';
-import { V3 } from './ve-b3.js';
-import { V4 } from './ve-b4.js';
-const b64 = V0 + V1 + V2 + V3 + V4;
-const bin = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-const ds = new DecompressionStream('gzip');
-const stream = new Blob([bin]).stream().pipeThrough(ds);
-const ab = await new Response(stream).arrayBuffer();
-const code = new TextDecoder().decode(ab);
-const blob = new Blob([code], { type: 'text/javascript' });
-const url = URL.createObjectURL(blob);
-const mod = await import(url);
-URL.revokeObjectURL(url);
-export const VIDEO_RESOLUTIONS = mod.VIDEO_RESOLUTIONS;
-export const VIDEO_FPS = mod.VIDEO_FPS;
-export const VIDEO_BACKGROUNDS = mod.VIDEO_BACKGROUNDS;
-export const TRANSITIONS = mod.TRANSITIONS;
-export const drawSceneFrame = mod.drawSceneFrame;
-export const renderVideo = mod.renderVideo;
-export const supportsVideoExport = mod.supportsVideoExport;
-export const createVideoExporter = mod.createVideoExporter;
-export const applyPresentationOverlays = mod.applyPresentationOverlays;
+/** Phase 4.1–4.3 video-export */
+export {
+  VIDEO_RESOLUTIONS,
+  VIDEO_FPS,
+  VIDEO_BACKGROUNDS,
+  TRANSITIONS,
+  drawSceneFrame,
+  renderVideo,
+  supportsVideoExport,
+  createVideoExporter,
+  applyPresentationOverlays
+} from './video-export-full.js';
