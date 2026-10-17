@@ -1,5 +1,5 @@
-/* Phase 4 service worker – offline cache (v8) */
-const CACHE = 'edu-video-factory-v8';
+/* Phase 4 service worker – offline cache (v9) */
+const CACHE = 'edu-video-factory-v9';
 const ASSETS = [
   '/',
   '/index.html',
@@ -45,7 +45,6 @@ const ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE).then(async (cache) => {
-      // Cache individually so one missing file does not fail the whole install
       await Promise.allSettled(
         ASSETS.map((url) =>
           cache.add(url).catch((err) => console.warn('[SW] skip', url, err.message))
@@ -67,12 +66,18 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  // Never intercept blob:/data: — required for gzip+base64 module loaders
+  if (url.protocol === 'blob:' || url.protocol === 'data:') return;
+  // Only handle same-origin
+  if (url.origin !== self.location.origin) return;
+
   event.respondWith(
     caches.match(req).then((cached) => {
       if (cached) return cached;
       return fetch(req).then((res) => {
         const copy = res.clone();
-        if (res.ok && new URL(req.url).origin === self.location.origin) {
+        if (res.ok) {
           caches.open(CACHE).then((c) => c.put(req, copy));
         }
         return res;
