@@ -10,6 +10,7 @@ Works offline. Data stays in the browser (IndexedDB).
 - **Phase 3** – Animation Studio (7 modes, playback, scene editing)
 - **Phase 4.1** – Browser video export (Canvas + MediaRecorder → WebM)
 - **Phase 4.2** – Bilingual narration (EN/BN scripts, TTS preview, upload/record, export mix)
+- **Phase 4.3** – Presentation tools (opening title, closing screen, captions, highlighting, branding)
 
 ## Quick start
 
@@ -39,6 +40,32 @@ Per-scene English and Bengali scripts, timing, and optional audio.
 - If MediaRecorder cannot capture video+audio together, export continues as video-only and the UI states that limitation.
 - Do not treat auto-filled scripts as verified translations; teachers edit all narration before export.
 
+
+## Phase 4.3 – Presentation Tools
+
+Professional presentation controls for educational video export.
+
+### Opening title
+Configure lesson title, class, subject, chapter, teacher/institution name (never hard-coded), duration, background, and layout. Optional.
+
+### Closing screen
+Summary, key learning points, practice questions, thank-you message, optional institution branding.
+
+### Captions
+Editable captions generated from **scene display text and narration scripts** (not from audio). English, Bengali, or both. Size, position, box/outline styles. Scene-level overrides. Long lines wrap and stay inside the frame; Bengali uses system / Noto fonts when available.
+
+### Highlighting
+Vocabulary, definitions, math results, dates, science terms, exam tips — pulled from lesson data when present, plus custom terms.
+
+### Branding
+Optional institution name, logo upload (stored as data URL in the project), footer on scenes, show on opening/closing.
+
+### Persistence
+All settings live on `animationData.presentation` and survive reloads with the animation project.
+
+### Export
+Opening and closing segments are part of the export timeline. Captions, highlights, and branding are drawn onto each frame. Narration mix from Phase 4.2 still applies when enabled.
+
 ## Phase 4.1 – Video Export
 
 Browser-based educational video rendering (no paid APIs, offline).
@@ -55,7 +82,7 @@ Browser-based educational video rendering (no paid APIs, offline).
 - Renderer: HTML Canvas + `captureStream` + `MediaRecorder`.
 - Narration mix: Web Audio API → MediaStreamDestination → combined MediaStream.
 - Timeline is deterministic (export clock).
-- Large modules are gzip+base64 chunked for GitHub size limits.
+- Source modules are split into part files and assembled at runtime for GitHub size limits.
 
 ## Animation modes (Phase 3)
 
