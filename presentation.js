@@ -1,19 +1,14 @@
-/** Phase 4.3 presentation gzip loader */
-import { P0 } from './pr-b0.js';
-import { P1 } from './pr-b1.js';
-import { P2 } from './pr-b2.js';
-import { P3 } from './pr-b3.js';
-const b64 = P0 + P1 + P2 + P3;
-const bin = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-const ds = new DecompressionStream('gzip');
-const stream = new Blob([bin]).stream().pipeThrough(ds);
-const ab = await new Response(stream).arrayBuffer();
-const code = new TextDecoder().decode(ab);
+/** Phase 4.3 source loader */
+import { S0 } from './pres-p0.js';
+import { S1 } from './pres-p1.js';
+import { S2 } from './pres-p2.js';
+import { S3 } from './pres-p3.js';
+import { S4 } from './pres-p4.js';
+const code = S0 + S1 + S2 + S3 + S4;
 const blob = new Blob([code], { type: 'text/javascript' });
 const url = URL.createObjectURL(blob);
 const mod = await import(url);
 URL.revokeObjectURL(url);
-
 export const CAPTION_MODES = mod.CAPTION_MODES;
 export const CAPTION_SIZES = mod.CAPTION_SIZES;
 export const CAPTION_POSITIONS = mod.CAPTION_POSITIONS;
