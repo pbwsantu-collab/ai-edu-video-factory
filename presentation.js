@@ -1,10 +1,6 @@
 /** Phase 4.3 source loader */
-import { S0 } from './pres-p0.js';
-import { S1 } from './pres-p1.js';
-import { S2 } from './pres-p2.js';
-import { S3 } from './pres-p3.js';
-import { S4 } from './pres-p4.js';
-const code = S0 + S1 + S2 + S3 + S4;
+const parts = await Promise.all([fetch(new URL('./pr-src.part0.txt', import.meta.url)).then(r=>r.text()), fetch(new URL('./pr-src.part1.txt', import.meta.url)).then(r=>r.text()), fetch(new URL('./pr-src.part2.txt', import.meta.url)).then(r=>r.text())]);
+const code = parts.join('');
 const blob = new Blob([code], { type: 'text/javascript' });
 const url = URL.createObjectURL(blob);
 const mod = await import(url);
