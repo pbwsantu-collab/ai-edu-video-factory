@@ -1,10 +1,11 @@
-/* Phase 1–4.1 service worker – offline cache */
-const CACHE = 'edu-video-factory-v7';
+/* Phase 4 service worker – offline cache (v8) */
+const CACHE = 'edu-video-factory-v8';
 const ASSETS = [
   '/',
   '/index.html',
   '/styles.css',
   '/styles-anim.css',
+  '/styles-pres.css',
   '/app.js',
   '/app-b0.js',
   '/app-b1.js',
@@ -14,26 +15,44 @@ const ASSETS = [
   '/pdf-extract.js',
   '/lesson-engine.js',
   '/animation-engine.js',
-  '/ae-b0.js',
-  '/ae-b1.js',
-  '/ae-b2.js',
+  '/ae-src-a0.js',
+  '/ae-src-a1.js',
+  '/ae-src-b0.js',
+  '/ae-src-b1.js',
   '/video-export.js',
+  '/ve-src-a0.js',
+  '/ve-src-a1.js',
+  '/ve-src-a2.js',
+  '/ve-src-b0.js',
+  '/ve-src-b1.js',
+  '/ve-src-b2.js',
   '/narration.js',
-  '/na-b3.js',
-  '/na-b2.js',
-  '/na-b1.js',
   '/na-b0.js',
-  '/ve-b0.js',
-  '/ve-b1.js',
-  '/ve-b2.js',
-  '/ve-b3.js',
+  '/na-b1.js',
+  '/na-b2.js',
+  '/na-b3.js',
+  '/presentation.js',
+  '/pr-src-a0.js',
+  '/pr-src-a1.js',
+  '/pr-src-a2.js',
+  '/pr-src-b0.js',
+  '/pr-src-b1.js',
+  '/pr-src-b2.js',
   '/manifest.json',
   '/favicon.svg'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE).then(async (cache) => {
+      // Cache individually so one missing file does not fail the whole install
+      await Promise.allSettled(
+        ASSETS.map((url) =>
+          cache.add(url).catch((err) => console.warn('[SW] skip', url, err.message))
+        )
+      );
+      return self.skipWaiting();
+    })
   );
 });
 
