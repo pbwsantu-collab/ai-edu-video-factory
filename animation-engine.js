@@ -7,7 +7,11 @@ const bin = Uint8Array.from(atob(AE_A0 + AE_A1 + AE_B0 + AE_B1), c => c.charCode
 const ds = new DecompressionStream('gzip');
 const stream = new Blob([bin]).stream().pipeThrough(ds);
 const ab = await new Response(stream).arrayBuffer();
-const code = new TextDecoder().decode(ab);
+let code = new TextDecoder().decode(ab);
+const base = import.meta.url;
+code = code.replace(/(from\s+|import\s*\()(['"])(\.\.?\/[^'"]+)\2/g, (m, kw, q, spec) => {
+  return kw + q + new URL(spec, base).href + q;
+});
 const blob = new Blob([code], { type: 'text/javascript' });
 const url = URL.createObjectURL(blob);
 const mod = await import(url);
