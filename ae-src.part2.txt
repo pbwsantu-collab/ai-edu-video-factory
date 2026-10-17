@@ -1,0 +1,110 @@
+hVoices; } catch (_) {}
+    setTimeout(refreshVoices, 250);
+  }
+  langSel?.addEventListener('change', () => { collectNarrationFromDom(sc); refreshVoices(); });
+  document.getElementById('btn-narr-preview')?.addEventListener('click', () => {
+    collectNarrationFromDom(sc);
+    const n = normalizeNarration(sc);
+    const lang = n.activeLang === 'bn' ? 'bn' : 'en';
+    const text = scriptForLang(n, lang);
+    const r = previewSpeech(text, { lang, voiceURI: n.voiceURI, volume: n.muted ? 0 : n.volume });
+    setStatus(r.ok ? (r.note || 'Playing preview…') : (r.reason || 'Preview failed'));
+    if (r.ok && !r.voiceName && lang === 'bn') setStatus('Preview started, but no Bengali-specific voice was found on this device.');
+  });
+  document.getElementById('btn-narr-stop')?.addEventListener('click', () => {
+    stopSpeech();
+    stopAudioElement();
+    setStatus('Stopped.');
+  });
+  document.getElementById('narr-file')?.addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    setStatus('Saving audio…');
+    try {
+      const n = collectNarrationFromDom(sc);
+      if (n.audioBlobId) await deleteAudioBlob(n.audioBlobId);
+      const dur = await measureAudioDuration(file);
+      const rec = await saveAudioBlob(file, { sceneId: sc.id, projectId: state.currentProject?.id, durationMs: dur, mime: file.type });
+      n.audioBlobId = rec.id;
+      n.audioMime = rec.mime;
+      n.audioDurationMs = dur;
+      sc.narration = n;
+      setStatus(`Audio attached · ${file.name}${dur ? ' · ' + (dur/1000).toFixed(1) + 's' : ''}`);
+      const st = document.getElementById('narr-audio-status');
+      if (st) st.textContent = `Attached audio${dur ? ' · ' + (dur/1000).toFixed(1) + 's' : ''} · ${file.type || ''}`;
+      const playBtn = document.getElementById('btn-narr-play-audio');
+      const clearBtn = document.getElementById('btn-narr-clear-audio');
+      if (playBtn) playBtn.disabled = false;
+      if (clearBtn) clearBtn.disabled = false;
+      toast('Narration audio saved for this scene.', 'success');
+    } catch (err) {
+      console.error(err);
+      setStatus(err.message || 'Upload failed');
+      toast(err.message || 'Audio upload failed', 'error');
+    }
+    e.target.value = '';
+  });
+  let micSession = null;
+  document.getElementById('btn-narr-record')?.addEventListener('click', async () => {
+    const btn = document.getElementById('btn-narr-record');
+    if (micSession) {
+      try {
+        const blob = await micSession.stop();
+        micSession = null;
+        if (btn) btn.textContent = 'Record mic';
+        setStatus('Saving recording…');
+        const n = collectNarrationFromDom(sc);
+        if (n.audioBlobId) await deleteAudioBlob(n.audioBlobId);
+        const dur = await measureAudioDuration(blob);
+        const rec = await saveAudioBlob(blob, { sceneId: sc.id, projectId: state.currentProject?.id, durationMs: dur, mime: blob.type });
+        n.audioBlobId = rec.id;
+        n.audioMime = rec.mime;
+        n.audioDurationMs = dur;
+        sc.narration = n;
+        setStatus(`Recording saved${dur ? ' · ' + (dur/1000).toFixed(1) + 's' : ''}`);
+        toast('Mic recording attached.', 'success');
+        render();
+      } catch (err) {
+        micSession = null;
+        if (btn) btn.textContent = 'Record mic';
+        toast(err.message || 'Record failed', 'error');
+      }
+      return;
+    }
+    if (!supportsMicRecord()) {
+      toast('Microphone recording not supported.', 'error');
+      return;
+    }
+    try {
+      micSession = await recordMicOnce(90000);
+      if (btn) btn.textContent = 'Stop recording';
+      setStatus('Recording… click again to stop.');
+    } catch (err) {
+      toast(err.message || 'Could not access microphone', 'error');
+    }
+  });
+  document.getElementById('btn-narr-play-audio')?.addEventListener('click', async () => {
+    const n = collectNarrationFromDom(sc);
+    if (!n.audioBlobId) { setStatus('No audio attached.'); return; }
+    const rec = await getAudioBlob(n.audioBlobId);
+    if (!rec?.blob) { setStatus('Audio missing from storage.'); return; }
+    stopSpeech();
+    const r = await playAudioBlob(rec.blob, n.muted ? 0 : n.volume);
+    setStatus(r.ok ? 'Playing attached audio…' : (r.reason || 'Play failed'));
+  });
+  document.getElementById('btn-narr-clear-audio')?.addEventListener('click', async () => {
+    const n = collectNarrationFromDom(sc);
+    if (n.audioBlobId) await deleteAudioBlob(n.audioBlobId);
+    n.audioBlobId = null;
+    n.audioMime = null;
+    n.audioDurationMs = null;
+    sc.narration = n;
+    setStatus('Audio cleared.');
+    render();
+  });
+})();
+
+bindPresentationPanel(state.currentProject, toast);
+fillSceneCaptionFields(ordered()[state.animSceneIndex]);
+videoExporter.bindExportPanel(()=>ordered())}
+return{renderAnimationStudio,bindAnimationStudio,ensureAnimationData:ensure,generateScenesFromLesson:gen,stopAllAnims:stop,cleanupExport:()=>videoExporter.cleanup(),ANIMATION_MODES}}
